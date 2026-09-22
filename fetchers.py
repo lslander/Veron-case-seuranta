@@ -307,9 +307,11 @@ def fetch_vero_detail(url: str) -> tuple[dt.date | None, str, str, str, str]:
     kentat menevat yhteen putkeen eika niita voi erottaa luotettavasti.
 
     Ohje voi olla vanha mutta paivitetty tanaan. Palautettava paivays on
-    silloin antopaiva, koska se on ratkaisun oma tunniste, mutta selite
-    kertoo paivityksesta, jotta on nahtavissa miksi vanha ohje nakyy
-    uusimpien listalla.
+    silloin paivityspaiva, koska sen mukaan ohje asettuu seurannassa
+    oikealle kohdalle: kasin tehdyssa seurannassa 24.2.2021 annettu
+    "CRS - lista osallistuvista lainkayttoalueista" raportoidaan sina
+    paivana kun se paivitetaan, 9.9.2026, ei vuonna 2021. Selite kertoo
+    molemmat paivat, jotta nakee miksi vanha ohje on listalla.
     """
     soup = BeautifulSoup(get(url), "html.parser")
 
@@ -352,7 +354,9 @@ def fetch_vero_detail(url: str) -> tuple[dt.date | None, str, str, str, str]:
         title = re.sub(r"\s*(Syventävä vero-ohje|Verohallinnon päätös)$", "", title).strip()
 
     if given and updated and updated != given:
-        return given, f"antopäivä {fmt(given)}, päivitetty {fmt(updated)}", keywords, dnro, title
+        return (max(given, updated),
+                f"antopäivä {fmt(given)}, päivitetty {fmt(updated)}",
+                keywords, dnro, title)
     chosen = given or updated
     return chosen, (f"antopäivä {fmt(chosen)}" if chosen else ""), keywords, dnro, title
 
