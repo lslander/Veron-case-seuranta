@@ -1,0 +1,224 @@
+# ---------------------------------------------------------------------------
+# Veron case-seuranta: lahteet, suodatus ja sahkopostimalli
+#
+# Tata tiedostoa muokkaamalla saat sailytettya sivun toiminnan ilman
+# Python-koodin koskemista. Koodi lukee vain tamant tiedoston avaimet.
+# ---------------------------------------------------------------------------
+
+site:
+  title: "Veron case-seuranta"
+  subtitle: "Verohallinnon ohjeet ja päätökset, KVL, KHO ja hallinto-oikeudet"
+  base_url: "https://lslander.github.io/Veron-case-seuranta/"
+  timezone: "Europe/Helsinki"
+  # Montako vuorokautta ratkaisuja pidetaan sivulla nakyvilla.
+  archive_days: 120
+  # Sahkopostimallin oletusikkuna (vuorokautta taaksepain).
+  default_window_days: 1
+
+email:
+  subject_prefix: "Veron case -seuranta"
+  greeting: "Huomenta,"
+  signature: "Terv. Raul"
+  distribution: "HKI TAX"
+  # Kategoriat siina jarjestyksessa kuin ne halutaan viestiin.
+  # "empty_label" on nimi, jota kaytetaan lauseessa "X:sta ei uusia ratkaisuja".
+  order:
+    - verohallinto
+    - kvl
+    - kho
+    - hao
+
+# ---------------------------------------------------------------------------
+# Lahteet
+# ---------------------------------------------------------------------------
+# type:
+#   vero_landing   = vero.fi/syventavat-vero-ohjeet/ "Uusimmat ..." -lohkot
+#   kho_rss        = kho.fi WordPress-syote (vuosikirjaratkaisut)
+#   court_cards    = tuomioistuimet.fi / kho.fi korttilistat (div.content-lift)
+#
+# tax_filter:
+#   false = lahde on kokonaan vero-aiheinen, ei suodateta
+#   true  = suodatetaan avainsanoilla (KHO ja HaO ratkaisevat kaikkia aloja)
+#
+# seed_since:
+#   Ensimmaisella ajolla (--seed) tata vanhemmat merkitaan jo raportoiduiksi.
+#   Arvo on manuaalisen seurannan viimeisinta raportoitua ratkaisua seuraava
+#   paiva. Tarkista ennen ensimmaista ajoa: jos ajat seedin vasta myohemmin,
+#   nosta paivaykset vastaamaan silloista tilannetta, muuten valissa jo
+#   kasin raportoidut ratkaisut tulevat viestiin toiseen kertaan.
+#
+#   HaO:n arvo on tahallaan vanhempi kuin muiden: hallinto-oikeuksien
+#   ratkaisut ilmestyvat sivulle viiveella, joten 13.5.2026 jalkeen
+#   annetut veroratkaisut ovat viela raportoimatta ja ne halutaan
+#   ensimmaiseen viestiin.
+
+sources:
+  - id: vero-ohjeet
+    name: "Verohallinnon ohjeet"
+    category: verohallinto
+    kind: "ohjeen"                 # "Verohallinto antanut ohjeen ..."
+    type: vero_landing
+    block: "Uusimmat ohjeet"
+    url: "https://www.vero.fi/syventavat-vero-ohjeet/"
+    list_url: "https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/"
+    tax_filter: false
+    report_updates: true         # paivitetty ohje raportoidaan uudelleen
+    seed_since: "2026-09-23"
+
+  - id: vero-paatokset
+    name: "Verohallinnon päätökset"
+    category: verohallinto
+    kind: "päätöksen"
+    type: vero_landing
+    block: "Uusimmat päätökset"
+    url: "https://www.vero.fi/syventavat-vero-ohjeet/"
+    list_url: "https://www.vero.fi/syventavat-vero-ohjeet/paatokset/"
+    tax_filter: false
+    report_updates: true         # paivitetty ohje raportoidaan uudelleen
+    seed_since: "2026-09-23"
+
+  - id: vero-kannanotot
+    name: "Verohallinnon kannanotot"
+    category: verohallinto
+    kind: "kannanoton"
+    type: vero_landing
+    block: "Uusimmat kannanotot"
+    url: "https://www.vero.fi/syventavat-vero-ohjeet/"
+    list_url: "https://www.vero.fi/syventavat-vero-ohjeet/kannanotot/"
+    tax_filter: false
+    report_updates: true         # paivitetty ohje raportoidaan uudelleen
+    seed_since: "2026-09-23"
+
+  - id: kvl
+    name: "KVL:n ennakkoratkaisut"
+    category: kvl
+    kind: "ennakkoratkaisun"
+    type: vero_landing
+    block: "Uusimmat ennakkoratkaisut"
+    url: "https://www.vero.fi/syventavat-vero-ohjeet/"
+    list_url: "https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/?sort=1&page=1&year="
+    tax_filter: false
+    # Viimeisin manuaalisessa seurannassa raportoitu: KVL:2026/28 (antopäivä 18.9.2026)
+    seed_since: "2026-09-23"
+
+  - id: kho-vuosikirja
+    name: "KHO:n vuosikirjaratkaisut"
+    category: kho
+    kind: "ratkaisun"
+    type: kho_rss
+    url: "https://www.kho.fi/feed/rss-feed?post_type=ratkaisut"
+    list_url: "https://www.kho.fi/kho-paatokset/ennakkopaatokset/"
+    tax_filter: true
+    # Viimeisin manuaalisessa seurannassa raportoitu: KHO:2026:75 (22.9.2026)
+    seed_since: "2026-09-23"
+
+  - id: kho-muut
+    name: "KHO:n muut julkaistut päätökset"
+    category: kho
+    kind: "ratkaisun"
+    type: court_cards
+    url: "https://www.kho.fi/kho-paatokset/muut-julkaistut-paatokset/"
+    list_url: "https://www.kho.fi/kho-paatokset/muut-julkaistut-paatokset/"
+    tax_filter: true
+    seed_since: "2026-09-23"
+
+  - id: hao
+    name: "Hallinto-oikeuksien ratkaisut"
+    category: hao
+    kind: "ratkaisun"
+    type: court_cards
+    url: "https://www.tuomioistuimet.fi/tuomioistuinten-ratkaisut/hallinto-oikeuksien-ratkaisut/"
+    list_url: "https://tuomioistuimet.fi/fi/index/ratkaisut/hallinto-oikeuksienratkaisut.html"
+    tax_filter: true
+    # Viimeisin manuaalisessa seurannassa raportoitu: Helsingin HAO 13.5.2026 3315/2026
+    seed_since: "2026-05-14"
+
+# ---------------------------------------------------------------------------
+# Kategoriat: naytto- ja sahkopostinimet
+# ---------------------------------------------------------------------------
+categories:
+  verohallinto:
+    label: "Verohallinto"
+    email_subject: "Verohallinto"      # "Verohallinto antanut ohjeen ..."
+    empty_label: "Verohallinnolta"
+  kvl:
+    label: "KVL"
+    email_subject: "KVL"
+    empty_label: "KVL:sta"
+  kho:
+    label: "KHO"
+    email_subject: "KHO"
+    empty_label: "KHO:sta"
+  hao:
+    label: "Hallinto-oikeudet"
+    email_subject: "Hallinto-oikeus"
+    empty_label: "HaO:sta"
+
+# ---------------------------------------------------------------------------
+# Verosuodatus (koskee vain lahteita joissa tax_filter: true)
+# ---------------------------------------------------------------------------
+# Osumaa haetaan otsikosta JA asiasanoista. Vertailu tehdaan pienaakkosin
+# ja ilman sanarajoja, koska suomen yhdyssanat vaativat sen: "lahdevero"
+# ja "kiinteistovero" loytyvat vain osajonolla "vero".
+#
+# strong  -> merkitaan varmaksi vero-osumaksi
+# maybe   -> merkitaan "tarkista"-merkinnalla mutta raportoidaan silti,
+#            koska ohje sanoo raportoida matalalla kynnyksella
+# exclude -> pudottaa osuman pois vaikka strong osuisi (vaarat ystavat)
+
+filter:
+  strong:
+    - vero                  # kattaa: verotus, arvonlisävero, lähdevero, veronkorotus, jälkiverotus...
+    - arvonlisä
+    - ennakkoperin          # ennakkoperintä, ennakkoperinnässä
+    - ennakonpidät          # ennakonpidätys
+    - ennakonkanto
+    - siirtohinnoitt        # siirtohinnoittelu
+    - konserniavustu        # konserniavustus
+    - vähennyskelpois       # vähennyskelpoisuus
+    - sukupolvenvaihdo      # sukupolvenvaihdoshuojennus
+    - luovutusvoit          # luovutusvoitto
+    - elinkeinotul          # elinkeinotulon verottaminen
+    - peitelty osin         # peitelty osinko
+    - peitellyn osin
+    - tonnisto              # tonnistoverotus
+    - varainsiirto
+    - valmiste              # valmisteverotus
+    - tulliselvit
+    - verkkolasku           # harvinainen, mutta osuu ALV-velvoitteisiin
+
+  maybe:
+    - tulli                 # tullaus ja valmisteverotus kulkevat usein yhdessä
+    - maksuunpano
+    - huojennus
+    - hankintameno
+    - korkovähennys
+    - korkojen vähentäm
+    - yritysjärjestel
+    - sulautumi
+    - jakautumi
+    - osakevaiht
+    - liiketoimintasiirt
+    - yleishyödyllis
+    - arvostami
+    - käypä arvo
+    - osinko
+    - pääomatul
+    - ansiotul
+    - palkkatul
+    - luontoisetu
+    - kustannusten korvaus
+    - elinkeinotoimint
+    - maatalou
+    - metsätalou
+    - apuyhti
+    - väliyhteis
+    - kiinteä toimipaik
+    - yleinen ja rajoitettu verovelvollisuus
+    - taloudellinen työnantaja
+    - verotusyhtym
+
+  exclude:
+    - liikennevakuutus
+    - potilasvahinko
+    - rikosvahinko
