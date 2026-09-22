@@ -1,15 +1,26 @@
 """
 Veron case-seuranta: lahteiden haku.
 
-Kolme lahdetyyppia riittaa kattamaan kaikki nelja seurattavaa lahdetta:
+Nelja lahdetyyppia kattaa kaikki seurattavat lahteet:
 
-  vero_landing  vero.fi/syventavat-vero-ohjeet/ palvelinrenderoi lohkot
-                "Uusimmat ohjeet", "Uusimmat paatokset", "Uusimmat
-                kannanotot" ja "Uusimmat ennakkoratkaisut". Listasivut
-                (ohje-hakusivu, paatokset, kannanotot, ennakkoratkaisut)
-                ovat Vue-komponentteja eivatka palauta linkkeja ilman
-                JavaScriptia, joten etusivun lohkot ovat ainoa lahde
-                jonka requests + BeautifulSoup nakee.
+  vero_api      vero.fi:n listasivut ovat Vue-komponentteja, mutta ne
+                hakevat sisaltonsa omalta rajapinnaltaan
+                /api/search/results. Sita kutsutaan tassa suoraan.
+                Etusivun "Uusimmat ..." -lohkoihin ei voi luottaa: ne
+                ovat karsittu poiminta eivatka sisalla kaikkea, esim.
+                9.9.2026 annettu "CRS - lista osallistuvista
+                lainkayttoalueista" puuttui niista kokonaan.
+
+                Parametrit ovat rootFilter (yksikko, ei monikkoa) ja
+                typeId, ja sort=1 tarkoittaa uusin ensin. Sivun oma
+                oletus sort=3 on aakkosjarjestys, joka nostaisi
+                karkeen vuosien takaisia ohjeita.
+
+                Rajapinnan Date on muokkauspaiva, ei antopaiva, joten
+                antopaiva, avainsanat ja diaarinumero luetaan edelleen
+                yksityiskohtasivulta. Se haetaan vain kun kohde on uusi
+                tai kun rajapinnan Date on muuttunut, jolloin ajo
+                pysyy nopeana.
 
   kho_rss       kho.fi pyorii WordPressilla ja tarjoaa syotteen
                 /feed/rss-feed?post_type=ratkaisut. Huomaa monikko:
@@ -24,11 +35,24 @@ Kolme lahdetyyppia riittaa kattamaan kaikki nelja seurattavaa lahdetta:
                 paivays time[datetime] muodossa pp.kk.vvvv. Otsikoissa on
                 pehmeita tavuviivoja (\\xad) ja nollan levyisia valeja
                 (\\u200b) rivitysta varten, ne pitaa siivota.
+
+  finlex_hao    finlex.fi on Next.js-sovellus, jonka lista ei ole
+                HTML:ssa vaan RSC-kuormassa self.__next_f.push([1,"..."])
+                -merkkijonoina. BeautifulSoup ei loyda sielta yhtaan
+                linkkia, joten lista luetaan saannollisilla lausekkeilla
+                raakatekstista. Vuosisivu palauttaa koko vuoden kerralla,
+                joten sivutusta ei tarvita.
+
+                Finlex ja tuomioistuimet.fi julkaisevat osin eri
+                ratkaisuja, ja molemmat ovat mukana tahallaan. Sama
+                ratkaisu eri osoitteessa tuottaa kaksoiskappaleen, mutta
+                se on pienempi haitta kuin valiin jaava ratkaisu.
 """
 
 from __future__ import annotations
 
 import datetime as dt
+import html
 import re
 import time
 import xml.etree.ElementTree as ET
@@ -62,6 +86,7 @@ class Item:
     dnro: str = ""                  # diaarinumero, nakyy vain sivulla
     confidence: str = "varma"       # varma | tarkista
     matched: list[str] = field(default_factory=list)
+    api_date: str = ""              # vero.fi-rajapinnan muokkauspaiva sellaisenaan
 
     @property
     def key(self) -> str:
@@ -107,9 +132,68 @@ def get(url: str, use_cache: bool = False) -> str:
     raise RuntimeError(f"{url}: {last}")
 
 
+def get_json(url: str, params: dict) -> dict:
+    """Hae JSON-rajapinnasta. Sama uudelleenyritys kuin get()."""
+    last = None
+    for attempt in range(RETRIES):
+        try:
+            r = _session.get(url, params=params, timeout=TIMEOUT,
+                             headers={"Accept": "application/json"})
+            r.raise_for_status()
+            return r.json()
+        except Exception as exc:  # noqa: BLE001
+            last = exc
+            if attempt < RETRIES - 1:
+                time.sleep(2 * (attempt + 1))
+    raise RuntimeError(f"{url}: {last}")
+
+
 def clean(text: str) -> str:
     """Poista pehmeat tavuviivat ja tuplavalit."""
     return re.sub(r"\s+", " ", (text or "").translate(SOFT)).strip()
+
+
+COURT_BEFORE_DATE = re.compile(r"\s*\d{1,2}\.\d{1,2}\.\d{4}")
+DECISION_NO = re.compile(r"(\d+)\s*/\s*(\d{4})")
+
+
+def fingerprints(item: "Item", group: str) -> tuple[str, str, bool]:
+    """Tunnisteet, joilla sama ratkaisu tunnistetaan kahdesta eri lahteesta.
+
+    Hallinto-oikeuksien ratkaisut tulevat seka tuomioistuimet.fi:sta etta
+    Finlexista, ja osoite on eri, joten URL ei riita tunnisteeksi.
+
+    Palautetaan kolme arvoa:
+
+      tarkka      tuomioistuin + antopaiva + otsikon numerot. Tama on
+                  oikea tunniste silloin kun molemmat lahteet kayttavat
+                  ratkaisunumeroa, ja se erottaa myos saman paivan
+                  ratkaisut toisistaan: Helsingin HAO antoi 13.5.2026
+                  kaksi eri veroratkaisua, 3313/2026 ja 3315/2026, joilla
+                  on taysin samat asiasanat.
+
+      valjä       tuomioistuin + antopaiva ilman numeroa.
+
+      epaselva    tosi, jos otsikon numeron vuosi ei ole antovuosi. Silloin
+                  otsikossa on diaarinumero eika ratkaisunumeroa, esim.
+                  "Vaasan HaO 6.3.2026 586/2025", jolloin numeroa ei voi
+                  verrata toisen lahteen numeroon lainkaan. Vain nailla
+                  ratkaisuilla valjaa tunnistetta saa kayttaa.
+    """
+    if not group or not item.date:
+        return "", "", False
+    court = re.sub(r"\W", "", COURT_BEFORE_DATE.split(item.title, 1)[0].lower())
+    if not court:
+        return "", "", False
+
+    loose = f"{group}|{court}|{item.date.isoformat()}"
+    nums = DECISION_NO.findall(item.title)
+    if not nums:
+        return "", loose, True
+
+    strict = loose + "|" + ",".join(sorted(n for n, _ in nums))
+    ambiguous = not any(int(y) == item.date.year for _, y in nums)
+    return strict, loose, ambiguous
 
 
 def parse_fi_date(text: str) -> dt.date | None:
@@ -127,51 +211,74 @@ def parse_fi_date(text: str) -> dt.date | None:
 # vero.fi
 # ---------------------------------------------------------------------------
 
-VERO_ITEM_HREF = re.compile(
-    r"/syventavat-vero-ohjeet/(?:ohje-hakusivu|paatokset|kannanotot|ennakkoratkaisut)/\d+/"
-)
+VERO_API = "https://www.vero.fi/api/search/results"
+VERO_BASE = "https://www.vero.fi"
 
 
-def fetch_vero_landing(source: dict, known: set[str]) -> list[Item]:
-    """Lue yksi "Uusimmat ..." -lohko vero.fi:n syventavien vero-ohjeiden etusivulta."""
-    soup = BeautifulSoup(get(source["url"], use_cache=True), "html.parser")
+def fetch_vero_api(source: dict, known: dict) -> list[Item]:
+    """Lue yksi vero.fi:n listaus (ohjeet, paatokset, kannanotot, KVL) rajapinnasta.
 
-    heading = None
-    for tag in soup.find_all(["h2", "h3"]):
-        if clean(tag.get_text(" ")).lower() == source["block"].lower():
-            heading = tag
-            break
-    if heading is None:
-        raise RuntimeError(f'lohkoa "{source["block"]}" ei loytynyt vero.fi:n etusivulta')
+    rootFilter ja typeId kertovat kumpi listaus on kyseessa, sort=1 on
+    uusin ensin. page_size kertoo montako uusinta luetaan; oletus riittaa
+    hyvin pitkallekin poissaololle, koska listaus on paivamaarajarjestyksessa.
+    """
+    data = get_json(VERO_API, {
+        "query": "",
+        "language": "fi",
+        "page": 1,
+        "pageSize": int(source.get("page_size", 30)),
+        "rootFilter": int(source["root_filter"]),
+        "typeId": int(source["type_id"]),
+        "sort": 1,
+        "showAllVersions": "false",
+    })
 
-    container = heading.find_parent(["section", "div"])
+    hits = data.get("Hits")
+    if not hits:
+        raise RuntimeError(f'rajapinta ei palauttanut osumia (TotalCount={data.get("TotalCount")})')
+
     items: list[Item] = []
     seen: set[str] = set()
 
-    for a in container.find_all("a", href=True):
-        href = a["href"]
-        if not VERO_ITEM_HREF.search(href):
+    for hit in hits:
+        friendly = (hit.get("FriendlyUrl") or "").strip()
+        title = clean(hit.get("Title") or "")
+        if not friendly or not title:
             continue
-        url = requests.compat.urljoin(source["url"], href)
-        if url in seen:
+        url = requests.compat.urljoin(VERO_BASE, friendly)
+        key = url.split("?")[0].rstrip("/")
+        if key in seen:
             continue
-        seen.add(url)
+        seen.add(key)
 
-        title = clean(a.get_text(" "))
-        if not title:
-            continue
+        api_date = clean(hit.get("Date") or "")
 
-        # Yksityiskohtasivu haetaan aina, myos jo tunnetuille. Syy: vanha ohje
-        # voidaan paivittaa ja se nousee silloin takaisin "Uusimmat"-lohkoon.
-        # Paivayksen muutos on ainoa tapa havaita se, ja lohkoissa on
-        # yhteensa vain parikymmenta kohdetta, joten pyyntoja tulee vahan.
+        # Yksityiskohtasivulta saadaan antopaiva, avainsanat ja diaarinumero,
+        # joita rajapinta ei anna. Se haetaan vain kun kohde on uusi tai kun
+        # rajapinnan paivays on muuttunut. Paivitetty ohje nakyy juuri Date-
+        # kentan muutoksena, joten tama ei hukkaa paivitystietoa.
+        record = known.get(key) if isinstance(known, dict) else None
+        need_detail = record is None or record.get("api_date") != api_date
+
         date, date_label, keywords, dnro = None, "", "", ""
-        try:
-            date, date_label, keywords, dnro, better_title = fetch_vero_detail(url)
-            if better_title:
-                title = better_title
-        except Exception:  # noqa: BLE001
-            pass
+        if need_detail:
+            try:
+                date, date_label, keywords, dnro, better_title = fetch_vero_detail(url)
+                if better_title:
+                    title = better_title
+            except Exception:  # noqa: BLE001
+                pass
+        elif record:
+            date = dt.date.fromisoformat(record["date"]) if record.get("date") else None
+            date_label = record.get("date_label", "")
+            keywords = record.get("keywords", "")
+            dnro = record.get("dnro", "")
+            title = record.get("title") or title
+
+        if date is None:
+            date = parse_fi_date(api_date)
+            if date and not date_label:
+                date_label = f"päivitetty {fmt(date)}"
 
         items.append(
             Item(
@@ -185,6 +292,7 @@ def fetch_vero_landing(source: dict, known: set[str]) -> list[Item]:
                 date_label=date_label,
                 keywords=keywords[:320],
                 dnro=dnro[:80],
+                api_date=api_date,
             )
         )
     return items
@@ -260,7 +368,7 @@ def fmt(d: dt.date | None) -> str:
 SWEDISH = re.compile(r"^(HFD|HD|MD|AD)[:\s]", re.I)
 
 
-def fetch_kho_rss(source: dict, known: set[str]) -> list[Item]:
+def fetch_kho_rss(source: dict, known: dict) -> list[Item]:
     root = ET.fromstring(get(source["url"]).encode("utf-8"))
     items: list[Item] = []
 
@@ -312,7 +420,7 @@ def fetch_kho_rss(source: dict, known: set[str]) -> list[Item]:
 # ---------------------------------------------------------------------------
 
 
-def fetch_court_cards(source: dict, known: set[str]) -> list[Item]:
+def fetch_court_cards(source: dict, known: dict) -> list[Item]:
     soup = BeautifulSoup(get(source["url"]), "html.parser")
     cards = soup.select("div.content-lift")
     if not cards:
@@ -361,14 +469,101 @@ def fetch_court_cards(source: dict, known: set[str]) -> list[Item]:
     return items
 
 
+# ---------------------------------------------------------------------------
+# Finlex: hallinto-oikeuksien ratkaisut
+# ---------------------------------------------------------------------------
+
+FINLEX_BASE = "https://www.finlex.fi"
+FINLEX_HREF = re.compile(r'"href":"(/fi/oikeuskaytanto/[a-z-]+/\d{4}/[^"]+)"')
+FINLEX_TITLE = re.compile(r'"span",null,\{"children":"([^"]+)"')
+FINLEX_CHIP = re.compile(r'"div","([^"]+)",\{"className":"[^"]*chip')
+
+
+def fetch_finlex_hao(source: dict, known: dict) -> list[Item]:
+    """Lue Finlexin vuosisivu hallinto-oikeuksien ratkaisuista.
+
+    Sisalto on Next.js:n RSC-kuormassa JavaScript-merkkijonoina, joissa
+    lainausmerkit on kenoviivatettu. Kuorma puretaan kertaalleen, minka
+    jalkeen jokainen ratkaisu on href, sita seuraava otsikko ja
+    keywordChips-lohkon asiasanat. Otsikko sisaltaa myos antopaivan.
+
+    Osoitteessa on vuosi, ja years_back kertoo montako edellista vuotta
+    luetaan lisaksi. Yksi riittaa: tammikuussa edellisen vuoden
+    ratkaisuja ilmestyy viela listalle.
+    """
+    items: list[Item] = []
+    seen: set[str] = set()
+    this_year = dt.date.today().year
+    years = [this_year - n for n in range(int(source.get("years_back", 0)) + 1)]
+
+    for year in years:
+        url_year = source["url"].format(year=year)
+        raw = get(url_year)
+        text = html.unescape(raw).replace('\\"', '"').replace("\\n", "\n")
+
+        matches = list(FINLEX_HREF.finditer(text))
+        if not matches and year == this_year:
+            raise RuntimeError("Finlexin listasta ei loytynyt yhtaan ratkaisulinkkia")
+
+        bounds = [m.start() for m in matches] + [len(text)]
+        items.extend(_finlex_items(source, text, matches, bounds, seen))
+
+    return items
+
+
+def _finlex_items(source: dict, text: str, matches: list, bounds: list, seen: set) -> list[Item]:
+    items: list[Item] = []
+    for i, m in enumerate(matches):
+        url = requests.compat.urljoin(FINLEX_BASE, m.group(1))
+        key = url.rstrip("/")
+        if key in seen:
+            continue
+        seen.add(key)
+
+        segment = text[m.start():bounds[i + 1]]
+
+        title_m = FINLEX_TITLE.search(segment)
+        if not title_m:
+            continue
+        title = clean(title_m.group(1))
+        if not title:
+            continue
+
+        # Asiasanat ovat chip-elementteina vasta keywordChips-lohkon jalkeen.
+        chips_at = segment.find("keywordChips")
+        keywords = ""
+        if chips_at >= 0:
+            chips = [clean(c) for c in FINLEX_CHIP.findall(segment[chips_at:])]
+            keywords = " – ".join(dict.fromkeys(c for c in chips if c))
+
+        # Antopaiva on otsikossa: "Helsingin HAO 13.5.2026 3315/2026".
+        date = parse_fi_date(title)
+
+        items.append(
+            Item(
+                source_id=source["id"],
+                source_name=source["name"],
+                category=source["category"],
+                kind=source.get("kind", ""),
+                title=title[:240],
+                url=url,
+                date=date,
+                date_label=f"annettu {fmt(date)}" if date else "",
+                keywords=keywords[:320],
+            )
+        )
+    return items
+
+
 FETCHERS = {
-    "vero_landing": fetch_vero_landing,
+    "vero_api": fetch_vero_api,
     "kho_rss": fetch_kho_rss,
     "court_cards": fetch_court_cards,
+    "finlex_hao": fetch_finlex_hao,
 }
 
 
-def fetch_source(source: dict, known: set[str]) -> SourceResult:
+def fetch_source(source: dict, known: dict) -> SourceResult:
     fn = FETCHERS.get(source["type"])
     if fn is None:
         return SourceResult(source["id"], source["name"], False, [], f'tuntematon tyyppi {source["type"]}')

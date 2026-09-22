@@ -32,13 +32,25 @@ email:
 # Lahteet
 # ---------------------------------------------------------------------------
 # type:
-#   vero_landing   = vero.fi/syventavat-vero-ohjeet/ "Uusimmat ..." -lohkot
+#   vero_api       = vero.fi:n oma hakurajapinta /api/search/results
 #   kho_rss        = kho.fi WordPress-syote (vuosikirjaratkaisut)
 #   court_cards    = tuomioistuimet.fi / kho.fi korttilistat (div.content-lift)
+#   finlex_hao     = finlex.fi:n hallinto-oikeuksien vuosisivu
+#
+# vero_api-lahteilla:
+#   root_filter + type_id  = mika listaus haetaan (arvot vero.fi:n omista
+#                            hakukomponenteista, ala muuta ilman syyta)
+#   page_size              = montako uusinta luetaan joka ajossa
 #
 # tax_filter:
 #   false = lahde on kokonaan vero-aiheinen, ei suodateta
 #   true  = suodatetaan avainsanoilla (KHO ja HaO ratkaisevat kaikkia aloja)
+#
+# dedupe_group:
+#   Kun sama ratkaisu voi tulla kahdesta lahteesta eri osoitteessa, anna
+#   molemmille sama ryhmanimi. Kaksoiskappale tunnistetaan tuomioistuimen,
+#   antopaivan ja otsikon numeron perusteella ja piilotetaan sivulta.
+#   Ilman tata jokainen lahde pitaa omansa erillaan URL:n perusteella.
 #
 # seed_since:
 #   Ensimmaisella ajolla (--seed) tata vanhemmat merkitaan jo raportoiduiksi.
@@ -57,9 +69,11 @@ sources:
     name: "Verohallinnon ohjeet"
     category: verohallinto
     kind: "ohjeen"                 # "Verohallinto antanut ohjeen ..."
-    type: vero_landing
-    block: "Uusimmat ohjeet"
-    url: "https://www.vero.fi/syventavat-vero-ohjeet/"
+    type: vero_api
+    root_filter: 5361
+    type_id: 7
+    page_size: 30
+    url: "https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/"
     list_url: "https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/"
     tax_filter: false
     report_updates: true         # paivitetty ohje raportoidaan uudelleen
@@ -69,9 +83,11 @@ sources:
     name: "Verohallinnon päätökset"
     category: verohallinto
     kind: "päätöksen"
-    type: vero_landing
-    block: "Uusimmat päätökset"
-    url: "https://www.vero.fi/syventavat-vero-ohjeet/"
+    type: vero_api
+    root_filter: 11066
+    type_id: 8
+    page_size: 20
+    url: "https://www.vero.fi/syventavat-vero-ohjeet/paatokset/"
     list_url: "https://www.vero.fi/syventavat-vero-ohjeet/paatokset/"
     tax_filter: false
     report_updates: true         # paivitetty ohje raportoidaan uudelleen
@@ -81,9 +97,11 @@ sources:
     name: "Verohallinnon kannanotot"
     category: verohallinto
     kind: "kannanoton"
-    type: vero_landing
-    block: "Uusimmat kannanotot"
-    url: "https://www.vero.fi/syventavat-vero-ohjeet/"
+    type: vero_api
+    root_filter: 11067
+    type_id: 9
+    page_size: 20
+    url: "https://www.vero.fi/syventavat-vero-ohjeet/kannanotot/"
     list_url: "https://www.vero.fi/syventavat-vero-ohjeet/kannanotot/"
     tax_filter: false
     report_updates: true         # paivitetty ohje raportoidaan uudelleen
@@ -93,9 +111,11 @@ sources:
     name: "KVL:n ennakkoratkaisut"
     category: kvl
     kind: "ennakkoratkaisun"
-    type: vero_landing
-    block: "Uusimmat ennakkoratkaisut"
-    url: "https://www.vero.fi/syventavat-vero-ohjeet/"
+    type: vero_api
+    root_filter: 11068
+    type_id: 10
+    page_size: 30
+    url: "https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/"
     list_url: "https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/?sort=1&page=1&year="
     tax_filter: false
     # Viimeisin manuaalisessa seurannassa raportoitu: KVL:2026/28 (antopäivä 18.9.2026)
@@ -123,14 +143,31 @@ sources:
     seed_since: "2026-09-23"
 
   - id: hao
-    name: "Hallinto-oikeuksien ratkaisut"
+    name: "Hallinto-oikeuksien ratkaisut (tuomioistuimet.fi)"
     category: hao
     kind: "ratkaisun"
     type: court_cards
     url: "https://www.tuomioistuimet.fi/tuomioistuinten-ratkaisut/hallinto-oikeuksien-ratkaisut/"
     list_url: "https://tuomioistuimet.fi/fi/index/ratkaisut/hallinto-oikeuksienratkaisut.html"
     tax_filter: true
+    dedupe_group: hao
     # Viimeisin manuaalisessa seurannassa raportoitu: Helsingin HAO 13.5.2026 3315/2026
+    seed_since: "2026-05-14"
+
+  # Finlex julkaisee osin eri ratkaisuja kuin tuomioistuimet.fi, joten
+  # molemmat ovat mukana. {year} korvataan ajovuodella, ja years_back
+  # kertoo montako edellista vuotta luetaan lisaksi (HaO julkaisee
+  # viiveella, joten tammikuussa edellinen vuosi on yha kesken).
+  - id: hao-finlex
+    name: "Hallinto-oikeuksien ratkaisut (Finlex)"
+    category: hao
+    kind: "ratkaisun"
+    type: finlex_hao
+    url: "https://www.finlex.fi/fi/oikeuskaytanto/hallinto-oikeudet/{year}"
+    list_url: "https://www.finlex.fi/fi/oikeuskaytanto/hallinto-oikeudet/2026"
+    years_back: 1
+    tax_filter: true
+    dedupe_group: hao
     seed_since: "2026-05-14"
 
 # ---------------------------------------------------------------------------
@@ -183,7 +220,10 @@ filter:
     - peitellyn osin
     - tonnisto              # tonnistoverotus
     - varainsiirto
-    - valmiste              # valmisteverotus
+    # "valmiste" yksinaan osui sanaan "valmistelu" (Helsingin HAO 7.7.2025
+    # 4526/2025, aluevaaleja koskeva ratkaisu). Valmisteverotus sisaltaa
+    # aina sanan "valmistevero", joten pidempi muoto riittaa.
+    - valmistevero          # valmisteverotus, valmisteveron alainen
     - tulliselvit
     - verkkolasku           # harvinainen, mutta osuu ALV-velvoitteisiin
 
@@ -209,8 +249,14 @@ filter:
     - luontoisetu
     - kustannusten korvaus
     - elinkeinotoimint
-    - maatalou
-    - metsätalou
+    # "maatalous" ja "metsatalous" yksinaan osuivat sosiaalietuus- ja
+    # tukiratkaisuihin (lomituspalvelu, maataloustuen takaisinperinta).
+    # Aito maa- tai metsatalouden veroratkaisu sisaltaa aina joko sanan
+    # "vero" tai jonkin naista tarkemmista.
+    - maatalouden tul
+    - maatalouden vero
+    - metsätalouden tul
+    - metsävähenny
     - apuyhti
     - väliyhteis
     - kiinteä toimipaik
@@ -218,7 +264,13 @@ filter:
     - taloudellinen työnantaja
     - verotusyhtym
 
+  # Kumoaa vain heikon (maybe) osuman, ei vahvaa. Lisaa tanne sana, kun
+  # sama vaara positiivinen toistuu.
   exclude:
     - liikennevakuutus
     - potilasvahinko
     - rikosvahinko
+    - lomituspalvelu
+    - sijaisapu
+    - maataloustu              # maataloustuki, ei verotusta
+    - toimeentulotu

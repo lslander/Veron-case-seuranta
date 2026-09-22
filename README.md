@@ -1,8 +1,9 @@
 # Veron case-seuranta
 
 Automatisoi päivittäisen vero-casejen seurannan. Skripti hakee joka arkiaamu
-neljä lähdettä, suodattaa vero-aiheiset ratkaisut ja julkaisee ne staattiselle
-sivulle, jolla on valmis sähköpostimalli kopioitavaksi HKI TAX -jakelulle.
+kaikki seurattavat lähteet, suodattaa vero-aiheiset ratkaisut ja julkaisee ne
+staattiselle sivulle, jolla on valmis sähköpostimalli kopioitavaksi HKI TAX
+-jakelulle.
 
 Sivu on valmis noin klo 8:30, ja viimeinen varmistusajo tehdään klo 9:00,
 eli teksti on kopioitavissa ennen klo 9:30 määräaikaa.
@@ -13,10 +14,27 @@ Lähteet, jotka haetaan joka ajolla:
 
 | Lähde | Mistä | Suodatus |
 |---|---|---|
-| Verohallinnon ohjeet, päätökset ja kannanotot | vero.fi "Uusimmat"-lohkot | ei suodateta, kaikki on vero-aiheista |
-| KVL:n ennakkoratkaisut | vero.fi | ei suodateta |
+| Verohallinnon ohjeet, päätökset ja kannanotot | vero.fi:n hakurajapinta | ei suodateta, kaikki on vero-aiheista |
+| KVL:n ennakkoratkaisut | vero.fi:n hakurajapinta | ei suodateta |
 | KHO:n vuosikirjaratkaisut ja muut julkaistut päätökset | kho.fi RSS ja korttilista | avainsanasuodatus |
-| Hallinto-oikeuksien ratkaisut | tuomioistuimet.fi | avainsanasuodatus |
+| Hallinto-oikeuksien ratkaisut | tuomioistuimet.fi **ja** finlex.fi | avainsanasuodatus |
+
+Vero.fi:n listasivut ovat Vue-komponentteja, jotka hakevat sisältönsä sivuston
+omalta rajapinnalta `/api/search/results`. Skripti kutsuu sitä suoraan.
+Etusivun "Uusimmat"-lohkoihin ei voi luottaa: ne ovat karsittu poiminta, ja
+esimerkiksi 9.9.2026 päivitetty "CRS – lista osallistuvista lainkäyttöalueista"
+puuttui niistä kokonaan.
+
+Hallinto-oikeuksien ratkaisut haetaan kahdesta paikasta, koska tuomioistuimet.fi
+ja Finlex julkaisevat osin eri ratkaisuja. Sama ratkaisu on molemmissa eri
+osoitteessa, joten kaksoiskappale tunnistetaan tuomioistuimen, antopäivän ja
+otsikon numeron perusteella ja piilotetaan sivulta. Numeroon ei aina voi
+luottaa: tuomioistuimet.fi otsikoi osan Vaasan ratkaisuista diaarinumerolla
+("Vaasan HaO 6.3.2026 586/2025") ja Finlex ratkaisunumerolla ("Vaasan HAO
+06.03.2026 281/2026"). Näissä riittää tuomioistuin ja antopäivä. Jos molemmilla
+on kelvollinen ratkaisunumero, niitä verrataan, jotta saman päivän eri
+ratkaisut eivät mene sekaisin: Helsingin HAO antoi 13.5.2026 ratkaisut
+3313/2026 ja 3315/2026, joilla on täysin samat asiasanat.
 
 KHO ja hallinto-oikeudet ratkaisevat kaikkia hallintoasioita, joten niistä
 poimitaan vain vero-aiheiset. Suodatin toimii kahdella tasolla. Vahva osuma
@@ -167,8 +185,11 @@ Vertailu tehdään pienaakkosin ja osajonona ilman sanarajoja, koska suomen
 yhdyssanat vaativat sen. Kirjoita siis `ennakonpidät`, älä `ennakonpidätys`,
 niin osuma löytyy myös taivutetuista muodoista.
 
-**Väärä positiivinen toistuu:** lisää sana `exclude`-listalle. Se pudottaa
-osuman, vaikka vahva sana osuisi.
+**Väärä positiivinen toistuu:** lisää sana `exclude`-listalle. Se kumoaa vain
+heikon (`maybe`) osuman, ei vahvaa. Listaa voi siis kasvattaa huoletta ilman
+riskiä siitä, että se alkaa niellä oikeita veroratkaisuja. Jos väärä osuma
+tulee `strong`-sanasta, sana itse on liian lyhyt: esimerkiksi `valmiste` osui
+sanaan "valmistelu", ja se vaihdettiin muotoon `valmistevero`.
 
 **Arkiston pituus:** kohta `site.archive_days`, oletuksena 120 vuorokautta.
 Tämä säätää, kuinka kauan ratkaisut näkyvät sivulla.
@@ -202,8 +223,14 @@ Punainen ruksi kertoo virheen. Yleisin syy on unohtunut kirjoitusoikeus
 on nollaantunut tai lähde on vaihtanut ratkaisun URL:ia. Tarkista, että
 `state.json` on tallentunut repoon ajon jälkeen.
 
+Jos sama hallinto-oikeuden ratkaisu tulee kahdesti tuomioistuimet.fi:stä ja
+Finlexistä, tunnistus on mennyt ohi. Katso, miten lähteet otsikoivat ratkaisun.
+Jos antopäivä on eri tai tuomioistuimen nimi on kirjoitettu eri tavalla, ne
+eivät osu toisiinsa. Tunnistus on tarkoituksella varovainen: mieluummin sama
+ratkaisu kahdesti kuin kaksi eri ratkaisua yhdistettynä.
+
 **Verohallinnon ohje ilmestyy uudelleen merkinnällä PÄIVITETTY.** Tämä on
-tarkoituksellista. Vanha ohje voidaan päivittää, jolloin se nousee takaisin
-vero.fi:n "Uusimmat"-lohkoon, ja käsin tehdyssä seurannassa tällainen ohje
-raportoidaan uudelleen. KVL:n ennakkoratkaisuilla tätä ei tehdä, koska
-ennakkoratkaisua ei päivitetä sisällöllisesti.
+tarkoituksellista. Vanha ohje voidaan päivittää, jolloin rajapinta antaa sille
+uuden päiväyksen, ja käsin tehdyssä seurannassa tällainen ohje raportoidaan
+uudelleen. KVL:n ennakkoratkaisuilla tätä ei tehdä, koska ennakkoratkaisua ei
+päivitetä sisällöllisesti.

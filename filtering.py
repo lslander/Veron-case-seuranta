@@ -16,6 +16,12 @@ Kaksi tasoa:
   tarkista  osuma vain maybe-listalta, nakyy sivulla keltaisella
             merkilla mutta menee silti viestiin, koska ohje sanoo
             raportoida matalalla kynnyksella
+
+exclude-lista tarkistetaan vasta strong-osumien jalkeen. Se on
+tarkoitettu kumoamaan heikko osuma, ei vahvaa: jos otsikossa lukee
+"arvonlisavero", ratkaisu raportoidaan riippumatta muista asiasanoista.
+Nain exclude-listaa voi kasvattaa huoletta, kun sama vaara positiivinen
+toistuu, ilman riskia etta se alkaa niella oikeita veroratkaisuja.
 """
 
 from __future__ import annotations
@@ -45,12 +51,12 @@ class TaxFilter:
         """Palauttaa (raportoidaanko, varmuus, osuneet hakusanat)."""
         haystack = normalise(f"{item.title} {item.keywords}")
 
-        if any(w in haystack for w in self.exclude):
-            return False, "", []
-
         hits_strong = [w for w in self.strong if w in haystack]
         if hits_strong:
             return True, "varma", hits_strong
+
+        if any(w in haystack for w in self.exclude):
+            return False, "", []
 
         hits_maybe = [w for w in self.maybe if w in haystack]
         if hits_maybe:

@@ -345,11 +345,14 @@ def sort_key(record: dict) -> tuple:
 def visible(state: dict, today: dt.date, archive_days: int) -> list[dict]:
     """Sivulla naytetaan vain viimeisten archive_days vuorokauden aikana
     seurantaan tulleet. Tila sisaltaa enemman: se muistaa myos vanhat,
-    jotka ovat yha lahteiden listoilla, jotta ne eivat ilmesty uutena."""
+    jotka ovat yha lahteiden listoilla, jotta ne eivat ilmesty uutena,
+    seka toisen lahteen kaksoiskappaleet (duplicate_of), jotka pidetaan
+    tilassa vain jotta ne eivat ilmesty uutena, mutta joita ei nayteta."""
     cutoff = today - dt.timedelta(days=archive_days)
     kept = [
         r for r in state["items"].values()
-        if dt.date.fromisoformat(r.get("first_seen") or today.isoformat()) >= cutoff
+        if not r.get("duplicate_of")
+        and dt.date.fromisoformat(r.get("first_seen") or today.isoformat()) >= cutoff
     ]
     return sorted(kept, key=sort_key, reverse=True)
 
