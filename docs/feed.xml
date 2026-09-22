@@ -5,7 +5,7 @@
     <link>https://lslander.github.io/Veron-case-seuranta/</link>
     <description>Verohallinnon ohjeet ja päätökset, KVL, KHO ja hallinto-oikeudet</description>
     <language>fi</language>
-    <lastBuildDate>Tue, 22 Sep 2026 14:24:59 +0300</lastBuildDate>
+    <lastBuildDate>Tue, 22 Sep 2026 14:29:31 +0300</lastBuildDate>
     <item>
       <title>KHO:2026:75</title>
       <link>https://www.kho.fi/paatokset/kho202675/</link>
@@ -28,17 +28,10 @@
       <pubDate>Thu, 17 Sep 2026 09:00:00 +0000</pubDate>
     </item>
     <item>
-      <title>KVL:2026/20</title>
-      <link>https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/375594/kvl0202026/</link>
-      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/375594/kvl0202026/</guid>
-      <description>KVL:n ennakkoratkaisut · antopäivä 21.8.2026, päivitetty 15.9.2026 · Arvonlisävero, Kiinteistön käyttöoikeuden luovuttaminen, Kiinteän omaisuuden vuokraus, Varastotilojen vuokraus</description>
-      <pubDate>Tue, 15 Sep 2026 09:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>KVL:2026:21</title>
-      <link>https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/375591/kvl0212026/</link>
-      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/375591/kvl0212026/</guid>
-      <description>KVL:n ennakkoratkaisut · antopäivä 21.8.2026, päivitetty 15.9.2026 · Arvonlisävero, Vientimyynti, Verottomuuden edellytykset, Kuljetuksen järjestäminen, Ostajan kuljettama ajoneuvo</description>
+      <title>KHO:2026:72</title>
+      <link>https://www.kho.fi/paatokset/kho202672/</link>
+      <guid isPermaLink="true">https://www.kho.fi/paatokset/kho202672/</guid>
+      <description>KHO:n vuosikirjaratkaisut · annettu 15.9.2026 · Perintöverotus – Sukupolvenvaihdoshuojennus – Yritysvarallisuus – Taseen avaaminen – Oikeudenkäynnin viivästymisen hyvittäminen</description>
       <pubDate>Tue, 15 Sep 2026 09:00:00 +0000</pubDate>
     </item>
     <item>
@@ -49,10 +42,17 @@
       <pubDate>Tue, 15 Sep 2026 09:00:00 +0000</pubDate>
     </item>
     <item>
-      <title>KHO:2026:72</title>
-      <link>https://www.kho.fi/paatokset/kho202672/</link>
-      <guid isPermaLink="true">https://www.kho.fi/paatokset/kho202672/</guid>
-      <description>KHO:n vuosikirjaratkaisut · annettu 15.9.2026 · Perintöverotus – Sukupolvenvaihdoshuojennus – Yritysvarallisuus – Taseen avaaminen – Oikeudenkäynnin viivästymisen hyvittäminen</description>
+      <title>KVL:2026:21</title>
+      <link>https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/375591/kvl0212026/</link>
+      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/375591/kvl0212026/</guid>
+      <description>KVL:n ennakkoratkaisut · antopäivä 21.8.2026, päivitetty 15.9.2026 · Arvonlisävero, Vientimyynti, Verottomuuden edellytykset, Kuljetuksen järjestäminen, Ostajan kuljettama ajoneuvo</description>
+      <pubDate>Tue, 15 Sep 2026 09:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>KVL:2026/20</title>
+      <link>https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/375594/kvl0202026/</link>
+      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/375594/kvl0202026/</guid>
+      <description>KVL:n ennakkoratkaisut · antopäivä 21.8.2026, päivitetty 15.9.2026 · Arvonlisävero, Kiinteistön käyttöoikeuden luovuttaminen, Kiinteän omaisuuden vuokraus, Varastotilojen vuokraus</description>
       <pubDate>Tue, 15 Sep 2026 09:00:00 +0000</pubDate>
     </item>
     <item>
@@ -112,13 +112,6 @@
       <pubDate>Tue, 18 Aug 2026 09:00:00 +0000</pubDate>
     </item>
     <item>
-      <title>Inventaarioerojen käsittely valmisteverotuksessa</title>
-      <link>https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/48581/inventaarioerojen-kasittely-valmisteverotuksessa2/</link>
-      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/48581/inventaarioerojen-kasittely-valmisteverotuksessa2/</guid>
-      <description>Verohallinnon ohjeet · antopäivä 18.8.2026</description>
-      <pubDate>Tue, 18 Aug 2026 09:00:00 +0000</pubDate>
-    </item>
-    <item>
       <title>Autoveron vientipalautus</title>
       <link>https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/372318/autoveron-vientipalautus/</link>
       <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/372318/autoveron-vientipalautus/</guid>
@@ -126,16 +119,23 @@
       <pubDate>Tue, 18 Aug 2026 09:00:00 +0000</pubDate>
     </item>
     <item>
-      <title>Osakkeiden hankintaan ja luovutukseen liittyvät asiantuntijapalkkiot yrityksen tuloverotuksessa</title>
-      <link>https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/48516/osakkeiden-hankintaan-ja-luovutukseen-liittyvat-asiantuntijapalkkiot-yrityksen-tuloverotuksessa3/</link>
-      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/48516/osakkeiden-hankintaan-ja-luovutukseen-liittyvat-asiantuntijapalkkiot-yrityksen-tuloverotuksessa3/</guid>
-      <description>Verohallinnon ohjeet · antopäivä 7.8.2026</description>
-      <pubDate>Fri, 07 Aug 2026 09:00:00 +0000</pubDate>
+      <title>Inventaarioerojen käsittely valmisteverotuksessa</title>
+      <link>https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/48581/inventaarioerojen-kasittely-valmisteverotuksessa2/</link>
+      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/48581/inventaarioerojen-kasittely-valmisteverotuksessa2/</guid>
+      <description>Verohallinnon ohjeet · antopäivä 18.8.2026</description>
+      <pubDate>Tue, 18 Aug 2026 09:00:00 +0000</pubDate>
     </item>
     <item>
       <title>Rajoitetusti verovelvollisen tulon verotus - luonnolliset henkilöt</title>
       <link>https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/334489/rajoitetusti-verovelvollisen-tulon-verotus-luonnolliset-henkilot/</link>
       <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/334489/rajoitetusti-verovelvollisen-tulon-verotus-luonnolliset-henkilot/</guid>
+      <description>Verohallinnon ohjeet · antopäivä 7.8.2026</description>
+      <pubDate>Fri, 07 Aug 2026 09:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Osakkeiden hankintaan ja luovutukseen liittyvät asiantuntijapalkkiot yrityksen tuloverotuksessa</title>
+      <link>https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/48516/osakkeiden-hankintaan-ja-luovutukseen-liittyvat-asiantuntijapalkkiot-yrityksen-tuloverotuksessa3/</link>
+      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/48516/osakkeiden-hankintaan-ja-luovutukseen-liittyvat-asiantuntijapalkkiot-yrityksen-tuloverotuksessa3/</guid>
       <description>Verohallinnon ohjeet · antopäivä 7.8.2026</description>
       <pubDate>Fri, 07 Aug 2026 09:00:00 +0000</pubDate>
     </item>
@@ -154,17 +154,17 @@
       <pubDate>Fri, 17 Jul 2026 09:00:00 +0000</pubDate>
     </item>
     <item>
-      <title>Arvoseteleiden arvonlisäverotuksesta</title>
-      <link>https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/71147/arvoseteleiden-arvonlisaverotuksesta3/</link>
-      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/71147/arvoseteleiden-arvonlisaverotuksesta3/</guid>
-      <description>Verohallinnon ohjeet · antopäivä 1.7.2026</description>
-      <pubDate>Wed, 01 Jul 2026 09:00:00 +0000</pubDate>
-    </item>
-    <item>
       <title>KVL:2026/13</title>
       <link>https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/368759/kvl0132026/</link>
       <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/368759/kvl0132026/</guid>
       <description>KVL:n ennakkoratkaisut · antopäivä 28.4.2026, päivitetty 1.7.2026 · Arvonlisävero, Verkkokaupan maksualusta, Yksi vai useampi palvelu, Rahoituspalvelu, Kauppamuotoinen factoringpalvelu, Maksuliikepalvelu</description>
+      <pubDate>Wed, 01 Jul 2026 09:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Arvoseteleiden arvonlisäverotuksesta</title>
+      <link>https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/71147/arvoseteleiden-arvonlisaverotuksesta3/</link>
+      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/71147/arvoseteleiden-arvonlisaverotuksesta3/</guid>
+      <description>Verohallinnon ohjeet · antopäivä 1.7.2026</description>
       <pubDate>Wed, 01 Jul 2026 09:00:00 +0000</pubDate>
     </item>
     <item>
@@ -189,16 +189,16 @@
       <pubDate>Thu, 25 Jun 2026 09:00:00 +0000</pubDate>
     </item>
     <item>
-      <title>Muutoksenhaku Verohallinnon päätökseen</title>
-      <link>https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/84774/muutoksenhaku-verohallinnon-paatokseen4/</link>
-      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/84774/muutoksenhaku-verohallinnon-paatokseen4/</guid>
+      <title>Verotuksen muuttaminen viranomaisaloitteisesti</title>
+      <link>https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/49036/verotuksen-muuttaminen-viranomaisaloitteisesti4/</link>
+      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/49036/verotuksen-muuttaminen-viranomaisaloitteisesti4/</guid>
       <description>Verohallinnon ohjeet · antopäivä 24.6.2026</description>
       <pubDate>Wed, 24 Jun 2026 09:00:00 +0000</pubDate>
     </item>
     <item>
-      <title>Verotuksen muuttaminen viranomaisaloitteisesti</title>
-      <link>https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/49036/verotuksen-muuttaminen-viranomaisaloitteisesti4/</link>
-      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/49036/verotuksen-muuttaminen-viranomaisaloitteisesti4/</guid>
+      <title>Muutoksenhaku Verohallinnon päätökseen</title>
+      <link>https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/84774/muutoksenhaku-verohallinnon-paatokseen4/</link>
+      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/84774/muutoksenhaku-verohallinnon-paatokseen4/</guid>
       <description>Verohallinnon ohjeet · antopäivä 24.6.2026</description>
       <pubDate>Wed, 24 Jun 2026 09:00:00 +0000</pubDate>
     </item>
@@ -245,17 +245,17 @@
       <pubDate>Thu, 04 Jun 2026 09:00:00 +0000</pubDate>
     </item>
     <item>
-      <title>KVL:2026/16</title>
-      <link>https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/366348/kvl0162026/</link>
-      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/366348/kvl0162026/</guid>
-      <description>KVL:n ennakkoratkaisut · antopäivä 18.5.2026, päivitetty 3.6.2026 · Henkilökohtaisen tulon verotus, Henkilökuntaetu, Liikunta- ja kulttuurietu, Pakohuonepeli</description>
-      <pubDate>Wed, 03 Jun 2026 09:00:00 +0000</pubDate>
-    </item>
-    <item>
       <title>KVL:2026/15</title>
       <link>https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/366345/kvl0152026/</link>
       <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/366345/kvl0152026/</guid>
       <description>KVL:n ennakkoratkaisut · antopäivä 18.5.2026, päivitetty 3.6.2026 · Elinkeinotulon verotus, Yhtymän elinkeinotoiminnan tulos, Yhtymäosuuden hankintameno, Realisoitumattomat erät</description>
+      <pubDate>Wed, 03 Jun 2026 09:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>KVL:2026/16</title>
+      <link>https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/366348/kvl0162026/</link>
+      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/366348/kvl0162026/</guid>
+      <description>KVL:n ennakkoratkaisut · antopäivä 18.5.2026, päivitetty 3.6.2026 · Henkilökohtaisen tulon verotus, Henkilökuntaetu, Liikunta- ja kulttuurietu, Pakohuonepeli</description>
       <pubDate>Wed, 03 Jun 2026 09:00:00 +0000</pubDate>
     </item>
     <item>
