@@ -5,7 +5,14 @@
     <link>https://lslander.github.io/Veron-case-seuranta/</link>
     <description>Verohallinnon ohjeet ja päätökset, KVL, KHO ja hallinto-oikeudet</description>
     <language>fi</language>
-    <lastBuildDate>Fri, 02 Oct 2026 10:04:52 +0300</lastBuildDate>
+    <lastBuildDate>Mon, 05 Oct 2026 08:41:05 +0300</lastBuildDate>
+    <item>
+      <title>KVL:2026/23</title>
+      <link>https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/376873/kvl0232026/</link>
+      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/376873/kvl0232026/</guid>
+      <description>KVL:n ennakkoratkaisut · antopäivä 21.8.2026, päivitetty 2.10.2026 · Arvonlisävero, Panttilainaustoiminta, Panttihuutokaupassa myyntiä koskeva palkkio</description>
+      <pubDate>Mon, 05 Oct 2026 09:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>KHO:2026:78</title>
       <link>https://www.kho.fi/paatokset/kho202678/</link>
@@ -264,13 +271,6 @@
       <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/48587/pienpanimoalennus-suomessa3/</guid>
       <description>Verohallinnon ohjeet · antopäivä 9.6.2026</description>
       <pubDate>Tue, 09 Jun 2026 09:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Ulkomailta Suomeen tulevan työntekijän verotus</title>
-      <link>https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/49113/ulkomailta-suomeen-tulevan-tyontekijan-verotus10/</link>
-      <guid isPermaLink="true">https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/49113/ulkomailta-suomeen-tulevan-tyontekijan-verotus10/</guid>
-      <description>Verohallinnon ohjeet · antopäivä 3.6.2026, päivitetty 4.6.2026</description>
-      <pubDate>Thu, 04 Jun 2026 09:00:00 +0000</pubDate>
     </item>
   </channel>
 </rss>
