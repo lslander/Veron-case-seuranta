@@ -2034,6 +2034,27 @@
    "title": "KVL:2026/29",
    "url": "https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/378306/kvl0292026/"
   },
+  "https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/379331/kvl0202026": {
+   "api_date": "20.10.2026",
+   "category": "kvl",
+   "confidence": "varma",
+   "date": "2026-10-20",
+   "date_label": "antopäivä 21.8.2026, päivitetty 20.10.2026",
+   "dnro": "VH/3636/02.05.04/2026",
+   "first_seen": "2026-10-20",
+   "fp_ambiguous": false,
+   "fp_loose": "",
+   "fp_strict": "",
+   "keywords": "Arvonlisävero, Kiinteistön käyttöoikeuden luovuttaminen, Kiinteän omaisuuden vuokraus, Varastotilojen vuokraus",
+   "kind": "ennakkoratkaisun",
+   "last_seen": "2026-10-20",
+   "matched": [],
+   "revised": false,
+   "source_id": "kvl",
+   "source_name": "KVL:n ennakkoratkaisut",
+   "title": "KVL:2026/20",
+   "url": "https://www.vero.fi/syventavat-vero-ohjeet/ennakkoratkaisut/379331/kvl0202026/"
+  },
   "https://www.vero.fi/syventavat-vero-ohjeet/kannanotot/101267/tyonantajan-maksamien-kustannusten-ja-asettautumispalveluiden-verotus-kansainvalisissa-tyoskentelytilanteissa3": {
    "api_date": "30.9.2025",
    "category": "verohallinto",
@@ -3568,6 +3589,6 @@
    "url": "https://www.vero.fi/syventavat-vero-ohjeet/paatokset/63500/verohallinnon-paatos-saantojen-vastaisesti-tai-muuta-kuin-kaupallista-myyntia-varten-maahantuodun-muun-tupakkaa-sisaltavan-tuotteen-verotusarvosta9/"
   }
  },
- "last_run": "2026-10-20T13:10:20+03:00",
+ "last_run": "2026-10-20T14:00:14+03:00",
  "last_run_date": "2026-10-20"
 }
